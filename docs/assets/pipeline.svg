@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="420" viewBox="0 0 960 420" role="img" aria-label="Fluxo SmartHome IoT">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1615"/>
+      <stop offset="100%" stop-color="#12201e"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#7dd3c0"/>
+    </marker>
+  </defs>
+  <rect width="960" height="420" rx="18" fill="url(#bg)"/>
+  <text x="36" y="42" fill="#e8f0ee" font-family="Segoe UI, Arial" font-size="22" font-weight="700">SmartHome IoT  Pipeline de Engenharia</text>
+  <text x="36" y="68" fill="#8aa39c" font-family="Consolas, monospace" font-size="13">L1 Percepção ’ L2 Comunicação ’ L3 Edge ’ L4 Serviço ’ L5 Research Lab</text>
+
+  <rect x="40" y="110" width="150" height="90" rx="12" fill="#00897b" stroke="#26a69a" stroke-width="2"/>
+  <text x="70" y="150" fill="#e0f2f1" font-family="Consolas" font-size="14">Arduino</text>
+  <text x="58" y="172" fill="#b2dfdb" font-family="Consolas" font-size="11">Sensores/Servos</text>
+
+  <rect x="230" y="110" width="150" height="90" rx="12" fill="#6d2b4e" stroke="#ec407a" stroke-width="2"/>
+  <text x="255" y="150" fill="#fce4ec" font-family="Consolas" font-size="14">Raspberry</text>
+  <text x="248" y="172" fill="#f8bbd0" font-family="Consolas" font-size="11">Edge Sync</text>
+
+  <rect x="420" y="110" width="150" height="90" rx="12" fill="#1d3531" stroke="#7dd3c0" stroke-width="2"/>
+  <text x="460" y="150" fill="#e8f0ee" font-family="Consolas" font-size="14">MQTT</text>
+  <text x="445" y="172" fill="#8aa39c" font-family="Consolas" font-size="11">house/* topics</text>
+
+  <rect x="610" y="110" width="150" height="90" rx="12" fill="#1d3531" stroke="#e8b86d" stroke-width="2"/>
+  <text x="640" y="150" fill="#e8f0ee" font-family="Consolas" font-size="14">FastAPI</text>
+  <text x="628" y="172" fill="#8aa39c" font-family="Consolas" font-size="11">State+SQI+DB</text>
+
+  <rect x="800" y="110" width="120" height="90" rx="12" fill="#1d3531" stroke="#e07a5f" stroke-width="2"/>
+  <text x="828" y="150" fill="#e8f0ee" font-family="Consolas" font-size="14">UI Lab</text>
+  <text x="818" y="172" fill="#8aa39c" font-family="Consolas" font-size="11">Simulador</text>
+
+  <line x1="190" y1="155" x2="225" y2="155" stroke="#7dd3c0" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="380" y1="155" x2="415" y2="155" stroke="#7dd3c0" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="570" y1="155" x2="605" y2="155" stroke="#7dd3c0" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="760" y1="155" x2="795" y2="155" stroke="#7dd3c0" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="40" y="240" width="880" height="140" rx="14" fill="#0b1211" stroke="#2a403c"/>
+  <text x="60" y="275" fill="#e8b86d" font-family="Consolas" font-size="14">Métricas de doutorado</text>
+  <text x="60" y="305" fill="#e8f0ee" font-family="Consolas" font-size="13">" Sync Quality Index (SQI)  " Latência p50/p95  " Pair skew Arduino”Raspberry</text>
+  <text x="60" y="333" fill="#e8f0ee" font-family="Consolas" font-size="13">" Fault injection  " Export CSV/JSON  " Protocolo v1.0.0 versionado</text>
+  <text x="60" y="361" fill="#8aa39c" font-family="Consolas" font-size="12">docs/ARCHITECTURE.md · docs/PROTOCOL.md · docs/METHODOLOGY.md</text>
+</svg>
