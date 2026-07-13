@@ -1,0 +1,29 @@
+# Python
+python_server/.venv/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Runtime / local data
+database/*.db
+database/*.db-*
+experiments/exports/*
+!experiments/exports/.gitkeep
+*.log
+.env
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# Java
+java_client/target/
+*.class
+
+# Node (if added later)
+node_modules/
