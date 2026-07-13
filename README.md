@@ -66,7 +66,7 @@ Este repositório não é apenas um “curso de IoT”. É uma **plataforma de e
 | Simulador visual | Demonstração interativa em banca/defesa |
 
 <p align="center">
-  <img src="docs/assets/pipeline.svg" alt="Pipeline de engenharia SmartHome IoT" width="100%" />
+  <img src="docs/assets/pipeline.png" alt="Pipeline de engenharia SmartHome IoT" width="100%" />
 </p>
 
 ---
