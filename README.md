@@ -15,12 +15,12 @@
 </p>
 
 <p align="center">
-  <a href="https://canonengineer.github.io/SmartHomeIOT/demo/">
-    <img src="https://img.shields.io/badge/%E2%96%B6%20Abrir%20Interface%20Gr%C3%A1fica%20(Demo%20Lab)-00bfa5?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Abrir Interface Gráfica" />
+  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/CanonEngineer/SmartHomeIOT/main/docs/demo/standalone.html">
+    <img src="https://img.shields.io/badge/%E2%96%B6%20Abrir%20Interface%20Gráfica%20AGORA-00bfa5?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Abrir Interface Gráfica" />
   </a>
   &nbsp;
-  <a href="https://canonengineer.github.io/SmartHomeIOT/">
-    <img src="https://img.shields.io/badge/Launch%20Page-12201e?style=for-the-badge&logo=github&logoColor=7dd3c0" alt="Launch Page" />
+  <a href="https://canonengineer.github.io/SmartHomeIOT/demo/">
+    <img src="https://img.shields.io/badge/GitHub%20Pages-12201e?style=for-the-badge&logo=github&logoColor=7dd3c0" alt="GitHub Pages" />
   </a>
   &nbsp;
   <a href="./docs/ARCHITECTURE.md">
@@ -28,8 +28,9 @@
   </a>
 </p>
 
-> **Clique em ▶ Abrir Interface Gráfica** para abrir o simulador visual no navegador (GitHub Pages — demo standalone).<br/>
-> Para o laboratório completo (API + telemetria + CSV/JSON), rode localmente com `start.ps1` e acesse `http://127.0.0.1:8000`.
+> **▶ Abrir Interface Gráfica AGORA** abre o simulador imediatamente (não depende do Pages).<br/>
+> O link `github.io/.../demo/` só funciona depois de ativar Pages em Settings (veja seção abaixo).<br/>
+> Laboratório completo local: `start.ps1` → `http://127.0.0.1:8000`.
 
 ---
 
@@ -75,10 +76,20 @@ Este repositório não é apenas um “curso de IoT”. É uma **plataforma de e
 ### Opção A — Botão online (Demo Lab)
 
 <p align="center">
-  <a href="https://canonengineer.github.io/SmartHomeIOT/demo/">
+  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/CanonEngineer/SmartHomeIOT/main/docs/demo/standalone.html">
     <img src="https://img.shields.io/badge/%E2%96%B6%20ABRIR%20SIMULADOR%20AGORA-7dd3c0?style=for-the-badge&labelColor=0b1211&color=7dd3c0" alt="Abrir simulador" height="48" />
   </a>
 </p>
+
+- **Backup imediato (funciona sem configurar Pages):** [Abrir standalone](https://htmlpreview.github.io/?https://raw.githubusercontent.com/CanonEngineer/SmartHomeIOT/main/docs/demo/standalone.html)
+- **GitHub Pages (após ativar):** https://canonengineer.github.io/SmartHomeIOT/demo/
+
+Para ativar Pages no repositório:
+
+1. Abra [Settings → Pages](https://github.com/CanonEngineer/SmartHomeIOT/settings/pages)
+2. Em **Build and deployment → Source**, escolha **GitHub Actions**
+   - ou **Deploy from a branch** → branch `main` → folder `/docs`
+3. Aguarde 1–2 minutos e recarregue o link `/demo/`
 
 Funciona direto no browser: casa virtual, Arduino/Raspberry, luzes, portas, servos e painel Research Lab em **modo demo**.
 
