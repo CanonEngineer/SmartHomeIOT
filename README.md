@@ -19,8 +19,8 @@
     <img src="https://img.shields.io/badge/%E2%96%B6%20Abrir%20Interface%20Gráfica%20AGORA-00bfa5?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Abrir Interface Gráfica" />
   </a>
   &nbsp;
-  <a href="https://canonengineer.github.io/SmartHomeIOT/demo/">
-    <img src="https://img.shields.io/badge/GitHub%20Pages-12201e?style=for-the-badge&logo=github&logoColor=7dd3c0" alt="GitHub Pages" />
+  <a href="https://github.com/CanonEngineer/SmartHomeIOT/blob/main/docs/demo/standalone.html">
+    <img src="https://img.shields.io/badge/Arquivo%20standalone-12201e?style=for-the-badge&logo=github&logoColor=7dd3c0" alt="Arquivo standalone" />
   </a>
   &nbsp;
   <a href="./docs/ARCHITECTURE.md">
@@ -337,7 +337,7 @@ Não reproduz conteúdo proprietário de cursos comerciais.
 ---
 
 <p align="center">
-  <a href="https://canonengineer.github.io/SmartHomeIOT/demo/">
+  <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/CanonEngineer/SmartHomeIOT/main/docs/demo/standalone.html">
     <img src="https://img.shields.io/badge/%E2%96%B6%20Abrir%20Interface%20Gráfica-00bfa5?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Abrir Interface" />
   </a>
 </p>
