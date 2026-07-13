@@ -84,14 +84,14 @@ Este repositório não é apenas um “curso de IoT”. É uma **plataforma de e
 - **Backup imediato (funciona sem configurar Pages):** [Abrir standalone](https://htmlpreview.github.io/?https://raw.githubusercontent.com/CanonEngineer/SmartHomeIOT/main/docs/demo/standalone.html)
 - **GitHub Pages (após ativar):** https://canonengineer.github.io/SmartHomeIOT/demo/
 
-Para ativar Pages no repositório:
+Para ativar Pages no repositório (remove o X vermelho e publica o site):
 
 1. Abra [Settings → Pages](https://github.com/CanonEngineer/SmartHomeIOT/settings/pages)
-2. Em **Build and deployment → Source**, escolha **GitHub Actions**
-   - ou **Deploy from a branch** → branch `main` → folder `/docs`
-3. Aguarde 1–2 minutos e recarregue o link `/demo/`
+2. **Source** = **Deploy from a branch**
+3. Branch = `main` · Folder = `/docs` · **Save**
+4. Aguarde 1–2 minutos e teste: https://canonengineer.github.io/SmartHomeIOT/demo/
 
-Funciona direto no browser: casa virtual, Arduino/Raspberry, luzes, portas, servos e painel Research Lab em **modo demo**.
+Guia: [`docs/PAGES_SETUP.md`](./docs/PAGES_SETUP.md)
 
 ### Opção B — Laboratório completo (local)
 
