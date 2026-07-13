@@ -377,18 +377,18 @@ button.warn { border-color: #7a4035; color: #f0b4a4; background: linear-gradient
           </g>
 
           <!-- LED + buzzer -->
-          <!-- LED + buzzer (acima da luz da sala, longe da porta) -->
-          <g transform="translate(230 175)">
+          <!-- LED + buzzer: canto superior da SALA (não sobre a porta) -->
+          <g id="led-group" transform="translate(250 105)">
             <circle id="led-indicator" r="14" fill="#35524e"/>
-            <text x="-14" y="34" class="tiny">LED</text>
+            <text x="-14" y="32" class="tiny">LED</text>
           </g>
-          <g transform="translate(300 175)">
+          <g id="buzzer-group" transform="translate(320 105)">
             <rect id="buzzer-indicator" x="-16" y="-12" width="32" height="24" rx="4" fill="#35524e"/>
-            <text x="-26" y="34" class="tiny">BUZZER</text>
+            <text x="-26" y="32" class="tiny">BUZZER</text>
           </g>
 
           <!-- Motion blob -->
-          <g id="motion-blob" transform="translate(240 250)" opacity="0.2">
+          <g id="motion-blob" transform="translate(250 210)" opacity="0.2">
             <ellipse rx="36" ry="20" fill="#f0c674"/>
             <text x="-28" y="40" class="tiny">PIR</text>
           </g>
