@@ -52,32 +52,43 @@
           <line x1="320" y1="40" x2="320" y2="520" stroke="#3a5c57" stroke-width="3"/>
           <line x1="600" y1="40" x2="600" y2="520" stroke="#3a5c57" stroke-width="3"/>
 
-          <!-- Lights (relays) -->
+          <!-- Atuadores da sala: LED | RELÉ SALA | BUZZER -->
+          <g id="led-group" transform="translate(75 120)">
+            <circle id="led-indicator" r="16" fill="#35524e"/>
+            <text x="-12" y="38" class="tiny">LED</text>
+          </g>
           <g id="light-sala" class="ceiling-light">
-            <circle cx="180" cy="130" r="28" fill="#243836"/>
-            <circle id="bulb-sala" cx="180" cy="130" r="16" fill="#3d4f4c"/>
+            <circle cx="175" cy="120" r="30" fill="#243836"/>
+            <circle id="bulb-sala" cx="175" cy="120" r="17" fill="#3d4f4c"/>
+            <text x="138" y="168" class="tiny">RELÉ SALA</text>
+          </g>
+          <g id="buzzer-group" transform="translate(275 120)">
+            <rect id="buzzer-indicator" x="-18" y="-13" width="36" height="26" rx="4" fill="#35524e"/>
+            <text x="-28" y="38" class="tiny">BUZZER</text>
           </g>
           <g id="light-cozinha" class="ceiling-light">
-            <circle cx="460" cy="130" r="28" fill="#243836"/>
-            <circle id="bulb-cozinha" cx="460" cy="130" r="16" fill="#3d4f4c"/>
+            <circle cx="460" cy="120" r="30" fill="#243836"/>
+            <circle id="bulb-cozinha" cx="460" cy="120" r="17" fill="#3d4f4c"/>
+            <text x="412" y="168" class="tiny">RELÉ COZINHA</text>
           </g>
 
-          <!-- Main door + servo -->
-          <g id="door-main-group" transform="translate(150 340)">
-            <rect x="-8" y="-90" width="16" height="180" rx="4" fill="#5c4030"/>
+          <!-- Porta elevada no meio da sala — bem longe do Arduino -->
+          <g id="door-main-group" transform="translate(110 248)">
+            <rect x="-8" y="-80" width="16" height="160" rx="4" fill="#5c4030"/>
             <g id="door-main-panel" class="door-panel">
-              <rect x="0" y="-90" width="70" height="180" rx="6" fill="#8b5a2b" stroke="#c48a4a" stroke-width="2"/>
-              <circle cx="58" cy="0" r="5" fill="#d4af37"/>
+              <rect x="0" y="-80" width="64" height="160" rx="6" fill="#8b5a2b" stroke="#c48a4a" stroke-width="2"/>
+              <circle cx="52" cy="0" r="5" fill="#d4af37"/>
             </g>
-            <g id="servo-porta-1" class="servo" transform="translate(-40 -110)">
+            <g id="servo-porta-1" class="servo" transform="translate(-52 -10)">
               <rect x="-18" y="-14" width="36" height="28" rx="4" fill="#222"/>
               <line id="servo-arm-1" x1="0" y1="0" x2="22" y2="0" stroke="#e8b86d" stroke-width="4" stroke-linecap="round"/>
               <circle cx="0" cy="0" r="5" fill="#e8b86d"/>
             </g>
+            <text x="8" y="105" class="tiny">PORTA</text>
           </g>
 
           <!-- Garage door + servo -->
-          <g id="door-garage-group" transform="translate(720 280)">
+          <g id="door-garage-group" transform="translate(720 260)">
             <rect x="-90" y="-10" width="180" height="14" fill="#4a5560"/>
             <g id="door-garage-panel" class="garage-panel">
               <rect x="-90" y="0" width="180" height="120" fill="#6b7280" stroke="#9aa3af" stroke-width="2"/>
@@ -99,21 +110,10 @@
             <text x="-28" y="48" class="tiny">SERVO BRAÇO</text>
           </g>
 
-          <!-- LED + buzzer -->
-          <!-- LED + buzzer: canto superior da SALA (não sobre a porta) -->
-          <g id="led-group" transform="translate(250 105)">
-            <circle id="led-indicator" r="14" fill="#35524e"/>
-            <text x="-14" y="32" class="tiny">LED</text>
-          </g>
-          <g id="buzzer-group" transform="translate(320 105)">
-            <rect id="buzzer-indicator" x="-16" y="-12" width="32" height="24" rx="4" fill="#35524e"/>
-            <text x="-26" y="32" class="tiny">BUZZER</text>
-          </g>
-
-          <!-- Motion blob -->
-          <g id="motion-blob" transform="translate(250 210)" opacity="0.2">
+          <!-- PIR à direita da porta, acima do Arduino -->
+          <g id="motion-blob" transform="translate(250 300)" opacity="0.35">
             <ellipse rx="36" ry="20" fill="#f0c674"/>
-            <text x="-28" y="40" class="tiny">PIR</text>
+            <text x="-14" y="40" class="tiny">PIR</text>
           </g>
 
           <!-- Arduino board -->

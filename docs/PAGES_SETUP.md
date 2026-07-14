@@ -16,4 +16,5 @@ ainda não estava correta).
    - https://canonengineer.github.io/SmartHomeIOT/
    - https://canonengineer.github.io/SmartHomeIOT/demo/
 
-Enquanto isso, o botão do README usa o demo standalone (não depende do Pages).
+Os botões do README apontam para `https://canonengineer.github.io/SmartHomeIOT/demo/standalone.html`.
+Cada `push` em `main` republica esta pasta via `.github/workflows/deploy-pages.yml`.
