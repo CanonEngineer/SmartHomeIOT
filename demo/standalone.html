@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartHome IoT — Demo Lab (GitHub Pages)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+:root {
+  --bg: #0b1211;
+  --panel: #12201e;
+  --ink: #e8f0ee;
+  --muted: #8aa39c;
+  --line: #2a403c;
+  --accent: #7dd3c0;
+  --amber: #e8b86d;
+  --warn: #e07a5f;
+  --arduino: #26a69a;
+  --pi: #ec407a;
+  --font-display: "Syne", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  background:
+    radial-gradient(1000px 500px at 10% -10%, #1a3330 0%, transparent 55%),
+    radial-gradient(800px 400px at 90% 0%, #2a1a24 0%, transparent 50%),
+    linear-gradient(160deg, #0d1615, #0b1211 40%, #101818);
+  overflow-x: hidden;
+}
+
+.noise {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+
+.topbar, .layout { position: relative; z-index: 1; }
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+}
+
+.brand { display: flex; align-items: center; gap: 0.9rem; }
+.brand-mark {
+  width: 14px; height: 42px; border-radius: 3px;
+  background: linear-gradient(180deg, var(--accent), var(--amber));
+  box-shadow: 0 0 18px rgba(125, 211, 192, 0.35);
+}
+.brand h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+}
+.brand p { margin: 0.1rem 0 0; color: var(--muted); font-size: 0.78rem; }
+
+.top-meta { display: flex; flex-wrap: wrap; gap: 0.55rem; align-items: center; justify-content: flex-end; }
+.pill {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.28rem 0.7rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.pill.offline { color: var(--warn); border-color: #6b3a32; }
+.pill.online { color: var(--accent); border-color: #2f6b5f; }
+.pill.sync { color: var(--amber); }
+.event { color: var(--muted); font-size: 0.78rem; max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1rem;
+  padding: 1rem 1.25rem 1.5rem;
+  min-height: calc(100vh - 84px);
+}
+
+.stage {
+  background: rgba(18, 32, 30, 0.85);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 0.75rem;
+  overflow: hidden;
+}
+.stage-grid {
+  background-image:
+    linear-gradient(rgba(125, 211, 192, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(125, 211, 192, 0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+  border-radius: 12px;
+  height: 100%;
+  min-height: 520px;
+}
+#house-svg { width: 100%; height: 100%; display: block; }
+.room-label { fill: #6f8f88; font-size: 12px; font-family: var(--font-mono); letter-spacing: 0.12em; }
+.tiny { fill: #7f9a94; font-size: 10px; font-family: var(--font-mono); }
+
+.door-panel { transform-origin: 0px 0px; transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+.door-panel.open { transform: rotate(-78deg); }
+.garage-panel { transform-origin: 0px 0px; transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+.garage-panel.open { transform: translateY(-100px); }
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-height: 0;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+.metrics article {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.85rem 0.95rem;
+}
+.metrics span { display: block; color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.metrics strong {
+  display: block;
+  margin-top: 0.35rem;
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  letter-spacing: -0.03em;
+}
+
+.controls, .scenarios, .logs {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+}
+h2 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.btn-row { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 0.55rem; }
+button {
+  appearance: none;
+  border: 1px solid #3a5f58;
+  background: linear-gradient(180deg, #1d3531, #16302c);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+button:hover { transform: translateY(-1px); border-color: var(--accent); }
+button:active { transform: translateY(0); }
+button.ghost { background: transparent; color: var(--muted); }
+button.warn { border-color: #7a4035; color: #f0b4a4; background: linear-gradient(180deg, #3a221e, #2a1714); }
+
+.slider-label {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem 0.75rem;
+  align-items: center;
+  color: var(--muted);
+  font-size: 0.75rem;
+  margin-top: 0.4rem;
+}
+.slider-label input { grid-column: 1 / -1; accent-color: var(--accent); }
+
+.logs { flex: 1; min-height: 160px; display: flex; flex-direction: column; }
+#log-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  max-height: 220px;
+}
+#log-list li {
+  border-top: 1px dashed var(--line);
+  padding: 0.45rem 0;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+#log-list li strong { color: var(--amber); font-weight: 600; }
+
+.research {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+}
+.research-lead {
+  margin: -0.35rem 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+.research-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+.research-metrics article {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.55rem 0.65rem;
+}
+.research-metrics span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.research-metrics strong {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+}
+#latency-chart {
+  width: 100%;
+  height: 120px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #0d1716;
+  margin-bottom: 0.65rem;
+}
+.link-btn {
+  display: inline-block;
+  text-decoration: none;
+  border: 1px solid #3a5f58;
+  background: linear-gradient(180deg, #1d3531, #16302c);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+}
+.link-btn.ghost { background: transparent; color: var(--muted); }
+#exp-list {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  max-height: 120px;
+  overflow: auto;
+}
+#exp-list li {
+  border-top: 1px dashed var(--line);
+  padding: 0.4rem 0;
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+#exp-list a { color: var(--accent); }
+
+.board-flash { animation: flash 0.45s ease; }
+@keyframes flash {
+  0% { filter: brightness(1); }
+  40% { filter: brightness(1.55); }
+  100% { filter: brightness(1); }
+}
+
+@media (max-width: 980px) {
+  .layout { grid-template-columns: 1fr; }
+  .topbar { flex-direction: column; align-items: flex-start; }
+  .stage-grid { min-height: 420px; }
+}
+
+</style>
+</head>
+<body>
+  <div class="noise"></div>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      <div>
+        <h1>SmartHome IoT</h1>
+        <p>Laboratório IoT — Arduino ↔ Raspberry · Doutorado</p>
+      </div>
+    </div>
+    <div class="top-meta">
+      <span id="sqi-status" class="pill sync">SQI —</span>
+      <span id="ws-status" class="pill offline">WS offline</span>
+      <span id="sync-status" class="pill sync">SYNC —</span>
+      <span id="last-event" class="event">Sistema iniciando…</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="stage" aria-label="Ambiente simulado">
+      <div class="stage-grid">
+        <svg id="house-svg" viewBox="0 0 900 560" role="img" aria-label="Planta da casa com mecanismos">
+          <defs>
+            <linearGradient id="floorGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#1a2a28"/>
+              <stop offset="100%" stop-color="#0f1918"/>
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="4" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- Floor -->
+          <rect x="40" y="40" width="820" height="480" rx="18" fill="url(#floorGrad)" stroke="#2f4a46" stroke-width="2"/>
+          <text x="60" y="72" class="room-label">SALA</text>
+          <text x="390" y="72" class="room-label">COZINHA</text>
+          <text x="680" y="72" class="room-label">GARAGEM</text>
+
+          <!-- Walls -->
+          <line x1="320" y1="40" x2="320" y2="520" stroke="#3a5c57" stroke-width="3"/>
+          <line x1="600" y1="40" x2="600" y2="520" stroke="#3a5c57" stroke-width="3"/>
+
+          <!-- Atuadores da sala: LED | RELÉ SALA | BUZZER -->
+          <g id="led-group" transform="translate(75 120)">
+            <circle id="led-indicator" r="16" fill="#35524e"/>
+            <text x="-12" y="38" class="tiny">LED</text>
+          </g>
+          <g id="light-sala" class="ceiling-light">
+            <circle cx="175" cy="120" r="30" fill="#243836"/>
+            <circle id="bulb-sala" cx="175" cy="120" r="17" fill="#3d4f4c"/>
+            <text x="138" y="168" class="tiny">RELÉ SALA</text>
+          </g>
+          <g id="buzzer-group" transform="translate(275 120)">
+            <rect id="buzzer-indicator" x="-18" y="-13" width="36" height="26" rx="4" fill="#35524e"/>
+            <text x="-28" y="38" class="tiny">BUZZER</text>
+          </g>
+          <g id="light-cozinha" class="ceiling-light">
+            <circle cx="460" cy="120" r="30" fill="#243836"/>
+            <circle id="bulb-cozinha" cx="460" cy="120" r="17" fill="#3d4f4c"/>
+            <text x="412" y="168" class="tiny">RELÉ COZINHA</text>
+          </g>
+
+          <!-- Porta elevada no meio da sala — bem longe do Arduino -->
+          <g id="door-main-group" transform="translate(110 268)">
+            <rect x="-8" y="-80" width="16" height="160" rx="4" fill="#5c4030"/>
+            <g id="door-main-panel" class="door-panel">
+              <rect x="0" y="-80" width="64" height="160" rx="6" fill="#8b5a2b" stroke="#c48a4a" stroke-width="2"/>
+              <circle cx="52" cy="0" r="5" fill="#d4af37"/>
+            </g>
+            <g id="servo-porta-1" class="servo" transform="translate(-52 -10)">
+              <rect x="-18" y="-14" width="36" height="28" rx="4" fill="#222"/>
+              <line id="servo-arm-1" x1="0" y1="0" x2="22" y2="0" stroke="#e8b86d" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="0" cy="0" r="5" fill="#e8b86d"/>
+            </g>
+            <text x="8" y="105" class="tiny">PORTA</text>
+          </g>
+
+          <!-- Garage door + servo -->
+          <g id="door-garage-group" transform="translate(720 260)">
+            <rect x="-90" y="-10" width="180" height="14" fill="#4a5560"/>
+            <g id="door-garage-panel" class="garage-panel">
+              <rect x="-90" y="0" width="180" height="120" fill="#6b7280" stroke="#9aa3af" stroke-width="2"/>
+              <line x1="-90" y1="40" x2="90" y2="40" stroke="#4b5563"/>
+              <line x1="-90" y1="80" x2="90" y2="80" stroke="#4b5563"/>
+            </g>
+            <g id="servo-porta-2" class="servo" transform="translate(0 -40)">
+              <rect x="-18" y="-14" width="36" height="28" rx="4" fill="#222"/>
+              <line id="servo-arm-2" x1="0" y1="0" x2="22" y2="0" stroke="#e8b86d" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="0" cy="0" r="5" fill="#e8b86d"/>
+            </g>
+          </g>
+
+          <!-- Arm servo -->
+          <g id="servo-arm-group" transform="translate(460 360)">
+            <rect x="-22" y="-18" width="44" height="36" rx="6" fill="#1f2933"/>
+            <line id="servo-arm-3" x1="0" y1="0" x2="48" y2="0" stroke="#7dd3c0" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="0" cy="0" r="6" fill="#7dd3c0"/>
+            <text x="-28" y="48" class="tiny">SERVO BRAÇO</text>
+          </g>
+
+          <!-- PIR à direita da porta, acima do Arduino -->
+          <g id="motion-blob" transform="translate(250 300)" opacity="0.35">
+            <ellipse rx="36" ry="20" fill="#f0c674"/>
+            <text x="-14" y="40" class="tiny">PIR</text>
+          </g>
+
+          <!-- Arduino board -->
+          <g id="board-arduino" transform="translate(70 430)">
+            <rect width="150" height="70" rx="8" fill="#00897b" stroke="#26a69a" stroke-width="2"/>
+            <text x="16" y="28" fill="#e0f2f1" font-size="13" font-family="IBM Plex Mono">ARDUINO</text>
+            <text id="arduino-status-text" x="16" y="50" fill="#b2dfdb" font-size="11" font-family="IBM Plex Mono">ONLINE</text>
+            <circle id="arduino-pulse" cx="128" cy="35" r="8" fill="#80cbc4"/>
+          </g>
+
+          <!-- Raspberry board -->
+          <g id="board-raspberry" transform="translate(680 430)">
+            <rect width="160" height="70" rx="8" fill="#6d2b4e" stroke="#c2185b" stroke-width="2"/>
+            <text x="14" y="28" fill="#fce4ec" font-size="13" font-family="IBM Plex Mono">RASPBERRY</text>
+            <text id="raspberry-status-text" x="14" y="50" fill="#f8bbd0" font-size="11" font-family="IBM Plex Mono">ONLINE</text>
+            <circle id="raspberry-pulse" cx="136" cy="35" r="8" fill="#f48fb1"/>
+          </g>
+
+          <!-- Sync line -->
+          <path id="sync-line" d="M220 465 C 400 420, 500 420, 680 465" fill="none" stroke="#7dd3c0" stroke-width="2" stroke-dasharray="8 6" opacity="0.7"/>
+          <circle id="sync-dot" r="5" fill="#e8b86d">
+            <animateMotion dur="2.4s" repeatCount="indefinite" path="M220 465 C 400 420, 500 420, 680 465"/>
+          </circle>
+        </svg>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <section class="metrics">
+        <article>
+          <span>Temperatura</span>
+          <strong id="m-temp">--°C</strong>
+        </article>
+        <article>
+          <span>Umidade</span>
+          <strong id="m-hum">--%</strong>
+        </article>
+        <article>
+          <span>Luz</span>
+          <strong id="m-light">--%</strong>
+        </article>
+        <article>
+          <span>Movimento</span>
+          <strong id="m-motion">—</strong>
+        </article>
+      </section>
+
+      <section class="controls">
+        <h2>Controles manuais</h2>
+        <div class="btn-row">
+          <button data-action="led" data-on="true">LED ON</button>
+          <button data-action="led" data-on="false" class="ghost">LED OFF</button>
+          <button data-action="buzzer" data-on="true">Buzzer</button>
+          <button data-action="buzzer" data-on="false" class="ghost">Silenciar</button>
+        </div>
+        <div class="btn-row">
+          <button data-action="relay" data-channel="1" data-on="true">Relé Sala</button>
+          <button data-action="relay" data-channel="1" data-on="false" class="ghost">Sala OFF</button>
+          <button data-action="relay" data-channel="2" data-on="true">Relé Cozinha</button>
+          <button data-action="relay" data-channel="2" data-on="false" class="ghost">Cozinha OFF</button>
+        </div>
+        <div class="btn-row">
+          <button data-action="door" data-door="main" data-open="true">Abrir Porta</button>
+          <button data-action="door" data-door="main" data-open="false" class="ghost">Fechar Porta</button>
+          <button data-action="door" data-door="garage" data-open="true">Abrir Garagem</button>
+          <button data-action="door" data-door="garage" data-open="false" class="ghost">Fechar Garagem</button>
+        </div>
+
+        <label class="slider-label">
+          Servo braço
+          <input id="servo-arm-slider" type="range" min="0" max="180" value="45" />
+          <span id="servo-arm-value">45°</span>
+        </label>
+      </section>
+
+      <section class="scenarios">
+        <h2>Simulações</h2>
+        <div class="btn-row">
+          <button data-scenario="welcome">Boas-vindas</button>
+          <button data-scenario="garage">Garagem</button>
+          <button data-scenario="alarm" class="warn">Alarme</button>
+          <button data-scenario="night" class="ghost">Modo noite</button>
+          <button data-scenario="sync_test">Teste sync</button>
+        </div>
+      </section>
+
+      <section class="research">
+        <h2>Research Lab</h2>
+        <p class="research-lead">Métricas de engenharia para evidência experimental</p>
+        <div class="research-metrics">
+          <article><span>SQI</span><strong id="r-sqi">—</strong></article>
+          <article><span>Latência p50</span><strong id="r-p50">—</strong></article>
+          <article><span>Latência p95</span><strong id="r-p95">—</strong></article>
+          <article><span>Skew sync</span><strong id="r-skew">—</strong></article>
+        </div>
+        <canvas id="latency-chart" width="640" height="140" aria-label="Gráfico de latência"></canvas>
+        <div class="btn-row">
+          <button data-experiment="sync_latency">Exp. Sync</button>
+          <button data-experiment="actuator_response">Exp. Atuadores</button>
+          <button data-experiment="fault_injection" class="warn">Exp. Falha</button>
+          <button data-experiment="end_to_end">Exp. E2E</button>
+        </div>
+        <div class="btn-row">
+          <a class="link-btn" href="../ARCHITECTURE.md" target="_blank" rel="noopener">Arquitetura</a>
+          <a class="link-btn ghost" href="../METHODOLOGY.md" target="_blank" rel="noopener">Metodologia</a>
+          <a class="link-btn ghost" href="https://github.com/CanonEngineer/SmartHomeIOT" target="_blank" rel="noopener">Repo</a>
+        </div>
+        <ul id="exp-list"></ul>
+      </section>
+
+      <section class="logs">
+        <h2>Logs</h2>
+        <ul id="log-list"></ul>
+      </section>
+    </aside>
+  </main>
+
+  <script>
+/**
+ * Demo Lab standalone (GitHub Pages) — simulação 100% no browser.
+ * Não depende do backend Python; ideal para botão "Abrir Interface" no README.
+ */
+(() => {
+  const $ = (sel) => document.querySelector(sel);
+  const logList = $("#log-list");
+  const expList = $("#exp-list");
+  let latencySeries = [];
+  let syncPulse = 0;
+  let sqi = 92;
+
+  const state = {
+    sensors: { temperature: 24.5, humidity: 55, light: 62, motion: false },
+    actuators: {
+      led: false,
+      buzzer: false,
+      relay: { "1": false, "2": false, "3": false, "4": false },
+      servo: { "porta-1": 0, "porta-2": 0, arm: 45 },
+      door: { main: false, garage: false },
+    },
+    boards: {
+      arduino: { online: true, sync: true },
+      raspberry: { online: true, sync: true },
+    },
+    last_event: "Demo Lab (modo browser)",
+    sync_pulse: 0,
+    sync_quality_index: 92,
+    pair_skew_ms: 18,
+  };
+
+  function pushLog(text) {
+    const li = document.createElement("li");
+    li.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong> — ${text}`;
+    logList.prepend(li);
+    while (logList.children.length > 40) logList.removeChild(logList.lastChild);
+  }
+
+  function drawChart(values) {
+    const canvas = $("#latency-chart");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = "#2a403c";
+    ctx.beginPath();
+    for (let y = 0; y <= h; y += 28) {
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+    }
+    ctx.stroke();
+    if (!values.length) return;
+    const max = Math.max(10, ...values);
+    ctx.strokeStyle = "#7dd3c0";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    values.forEach((v, i) => {
+      const x = (i / Math.max(1, values.length - 1)) * (w - 8) + 4;
+      const y = h - 8 - (v / max) * (h - 16);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+
+  function render() {
+    const s = state.sensors;
+    const a = state.actuators;
+    const boards = state.boards;
+    $("#m-temp").textContent = `${s.temperature.toFixed(1)}°C`;
+    $("#m-hum").textContent = `${s.humidity.toFixed(0)}%`;
+    $("#m-light").textContent = `${s.light.toFixed(0)}%`;
+    $("#m-motion").textContent = s.motion ? "SIM" : "NÃO";
+    $("#last-event").textContent = state.last_event;
+    $("#sync-status").textContent = `SYNC OK #${state.sync_pulse}`;
+    $("#sqi-status").textContent = `SQI ${sqi.toFixed(0)}`;
+    $("#r-sqi").textContent = sqi.toFixed(1);
+    $("#r-p50").textContent = `${(8 + Math.random() * 4).toFixed(1)} ms`;
+    $("#r-p95").textContent = `${(18 + Math.random() * 8).toFixed(1)} ms`;
+    $("#r-skew").textContent = `${state.pair_skew_ms.toFixed(1)} ms`;
+    setPill($("#ws-status"), true, "DEMO online", "offline");
+
+    $("#bulb-sala").setAttribute("fill", a.relay["1"] ? "#ffe082" : "#3d4f4c");
+    $("#bulb-cozinha").setAttribute("fill", a.relay["2"] ? "#ffe082" : "#3d4f4c");
+    $("#led-indicator").setAttribute("fill", a.led ? "#7CFFB2" : "#35524e");
+    $("#buzzer-indicator").setAttribute("fill", a.buzzer ? "#e07a5f" : "#35524e");
+    $("#door-main-panel").classList.toggle("open", a.door.main);
+    $("#door-garage-panel").classList.toggle("open", a.door.garage);
+    $("#servo-arm-1").setAttribute("transform", `rotate(${a.servo["porta-1"]})`);
+    $("#servo-arm-2").setAttribute("transform", `rotate(${a.servo["porta-2"]})`);
+    $("#servo-arm-3").setAttribute("transform", `rotate(${-a.servo.arm})`);
+    $("#servo-arm-slider").value = a.servo.arm;
+    $("#servo-arm-value").textContent = `${a.servo.arm}°`;
+    $("#motion-blob").setAttribute("opacity", s.motion ? "0.9" : "0.15");
+    $("#arduino-status-text").textContent = boards.arduino.online ? "ONLINE" : "OFFLINE";
+    $("#raspberry-status-text").textContent = boards.raspberry.online ? "ONLINE" : "OFFLINE";
+    drawChart(latencySeries);
+  }
+
+  function setPill(el, online, onlineText, offlineText) {
+    el.classList.toggle("online", online);
+    el.classList.toggle("offline", !online);
+    el.textContent = online ? onlineText : offlineText;
+  }
+
+  function pulse(event) {
+    const t0 = performance.now();
+    state.sync_pulse = (state.sync_pulse + 1) % 1000;
+    state.last_event = event;
+    state.pair_skew_ms = 10 + Math.random() * 40;
+    sqi = Math.max(60, Math.min(99, sqi + (Math.random() * 4 - 1.5)));
+    state.sync_quality_index = sqi;
+    latencySeries.push(performance.now() - t0 + 4 + Math.random() * 12);
+    if (latencySeries.length > 40) latencySeries.shift();
+    pushLog(event);
+    render();
+  }
+
+  function applyAction(payload) {
+    const a = state.actuators;
+    if (payload.action === "led") a.led = !!payload.on;
+    if (payload.action === "buzzer") a.buzzer = !!payload.on;
+    if (payload.action === "relay") a.relay[String(payload.channel)] = !!payload.on;
+    if (payload.action === "door") {
+      a.door[payload.door_id] = !!payload.open;
+      const angle = payload.open ? 90 : 0;
+      if (payload.door_id === "main") a.servo["porta-1"] = angle;
+      if (payload.door_id === "garage") a.servo["porta-2"] = angle;
+    }
+    if (payload.action === "servo") a.servo[payload.servo_id] = Number(payload.angle);
+    if (payload.action === "simulate") {
+      const sc = payload.scenario;
+      if (sc === "welcome") {
+        a.led = true; a.relay["1"] = true; a.door.main = true; a.servo["porta-1"] = 90; a.servo.arm = 120;
+      } else if (sc === "garage") {
+        a.door.garage = true; a.servo["porta-2"] = 90; a.relay["2"] = true;
+      } else if (sc === "alarm") {
+        a.buzzer = true; a.led = true; a.relay["1"] = true; a.relay["2"] = true; state.sensors.motion = true;
+      } else if (sc === "night") {
+        a.door.main = false; a.door.garage = false; a.servo["porta-1"] = 0; a.servo["porta-2"] = 0;
+        a.relay["1"] = false; a.relay["2"] = false; a.led = false; a.buzzer = false; a.servo.arm = 0;
+      } else if (sc === "sync_test") {
+        a.servo["porta-1"] = 90; a.led = true;
+      }
+    }
+    pulse(payload.action === "simulate" ? `Cenário ${payload.scenario}` : `Ação ${payload.action}`);
+  }
+
+  function runExperiment(name) {
+    pushLog(`Experimento (demo): ${name}`);
+    if (name === "fault_injection") sqi = 55;
+    if (name === "sync_latency") sqi = 94;
+    const id = Math.random().toString(16).slice(2, 8);
+    const li = document.createElement("li");
+    li.innerHTML = `<strong>${name}</strong> · SQI ${sqi.toFixed(0)} · demo-id ${id}`;
+    expList.prepend(li);
+    pulse(`Experimento ${name}`);
+  }
+
+  document.querySelectorAll("button[data-action]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const action = btn.dataset.action;
+      const payload = { action };
+      if (action === "led" || action === "buzzer") payload.on = btn.dataset.on === "true";
+      if (action === "relay") {
+        payload.channel = btn.dataset.channel;
+        payload.on = btn.dataset.on === "true";
+      }
+      if (action === "door") {
+        payload.door_id = btn.dataset.door;
+        payload.open = btn.dataset.open === "true";
+      }
+      applyAction(payload);
+    });
+  });
+
+  document.querySelectorAll("button[data-scenario]").forEach((btn) => {
+    btn.addEventListener("click", () => applyAction({ action: "simulate", scenario: btn.dataset.scenario }));
+  });
+
+  document.querySelectorAll("button[data-experiment]").forEach((btn) => {
+    btn.addEventListener("click", () => runExperiment(btn.dataset.experiment));
+  });
+
+  $("#servo-arm-slider").addEventListener("input", (e) => {
+    applyAction({ action: "servo", servo_id: "arm", angle: Number(e.target.value) });
+  });
+
+  // Sensor drift + heartbeat visual
+  setInterval(() => {
+    const t = Date.now() / 1000;
+    state.sensors.temperature = 23.5 + 2.2 * Math.sin(t / 18);
+    state.sensors.humidity = 50 + 7 * Math.sin(t / 25);
+    state.sensors.light = 55 + 25 * Math.sin(t / 30);
+    state.sensors.motion = state.actuators.door.main || Math.random() < 0.05;
+    syncPulse++;
+    state.sync_pulse = syncPulse % 1000;
+    render();
+  }, 2000);
+
+  pushLog("Demo Lab carregado (GitHub Pages — sem backend)");
+  render();
+})();
+
+</script>
+</body>
+</html>
+
+
